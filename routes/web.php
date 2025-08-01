@@ -10,3 +10,7 @@ Route::get('/', function () {
 Route::get('api/tweets', function(){
     return Tweet::with('user:id,name,username,avatar')->latest()->paginate(10);
 });
+
+Route::get('api/tweets/{tweet}', function(Tweet $tweet){
+    return $tweet->load('user:id,name,username,avatar');
+});

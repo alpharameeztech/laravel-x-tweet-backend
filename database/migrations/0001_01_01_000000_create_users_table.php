@@ -17,6 +17,10 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('username')->unique();
             $table->string('avatar');
+            $table->text('profile');
+            $table->string('location');
+            $table->string('link');
+            $table->string('link_text');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

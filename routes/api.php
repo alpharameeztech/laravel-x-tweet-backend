@@ -15,3 +15,17 @@ Route::post('/tweets', function (Request $request) {
         'user_id' => User::first()->id 
     ]);
 });
+
+Route::get('/users/{user}', function(User $user){
+    return $user->only(
+        'id',
+        'name',
+        'username',
+        'avatar',
+        'profile',
+        'location',
+        'link',
+        'link_text',
+        'created_at'
+    );
+});

@@ -6,6 +6,7 @@ use App\Models\Tweet;
 use App\Models\User;
 use Illuminate\Support\Facades\Http;
 use App\AI\Chat;
+use App\AI\OpenAIChat;
 
 Route::get('/', function () {
     return view('welcome');
@@ -34,20 +35,38 @@ Route::get('api/tweets/{tweet}', function(Tweet $tweet){
 
 
 Route::get('ai', function () {
+// using Chat class
+//     $chat = New Chat();
+//     $joke = $chat
+//         ->systemMessage('Create a joke about husband and wife')
+//         ->send('Create a nice joke');
+//
+//         logger('joke 1');
+//         logger($joke);
+//
+//         $joke2 = $chat->reply('thats cool but it should be more silly');
+//
+//         logger('joke 2');
+//         logger($joke2);
+//
+//     return $joke2;
 
-    $chat = New Chat();
+
+//   using open ai chat helper
+    $chat = New OpenAIChat();
     $joke = $chat
-        ->systemMessage('Create a joke about husband and wife')
+        ->systemMessage('Create a nice quote to keep me moving')
         ->send('Create a nice joke');
 
         logger('joke 1');
         logger($joke);
 
-        $joke2 = $chat->reply('thats cool. Create a nice joke with few more sentences that like a short story');
+        $joke2 = $chat->reply('Make it more nice');
 
         logger('joke 2');
         logger($joke2);
 
     return $joke2;
+
 
 });

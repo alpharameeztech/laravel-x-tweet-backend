@@ -3,8 +3,9 @@
 namespace App\AI;
 
 use Illuminate\Support\Facades\Http;
+use OpenAI\Laravel\Facades\OpenAI;
 
-class Chat
+class OpenAIChat
 {
     protected array $messages = [];
 
@@ -29,16 +30,12 @@ class Chat
             'content' => $message,
         ];
 
-        $response = Http::withHeaders([
-            'Content-Type' => 'application/json',
-            'Authorization' => 'Bearer ' . env('OPENAI_API_KEY'),
-        ])->post('https://api.openai.com/v1/chat/completions', [
+        $response = OpenAI::chat()->create([
             'model' => 'gpt-4.1-nano',
             'messages' => $this->messages,
-        ]);
+        ])->choices[0]->message->content;
 
         if($response){
-            $response = $response->json('choices.0.message.content') ?? 'No response';
 
                 $this->messages[] = [
                     'role' => 'assistant',

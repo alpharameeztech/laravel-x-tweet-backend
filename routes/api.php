@@ -1,9 +1,15 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use App\Models\Tweet;
 use App\Models\User;
+
+Route::get('/user', function (Request $request) {
+    return $request->user();
+})->middleware('auth:sanctum');
+
+
 
 Route::post('/tweets', function (Request $request) {
     $request->validate([
@@ -12,7 +18,7 @@ Route::post('/tweets', function (Request $request) {
 
     return Tweet::create([
         'body' => $request->body,
-        'user_id' => User::first()->id 
+        'user_id' => User::first()->id
     ]);
 });
 

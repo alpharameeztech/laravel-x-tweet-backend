@@ -40,6 +40,9 @@ Route::get('users/{user}/tweets', function(User $user){
     return $user->tweets()->with('user:id,name,username,avatar')->latest()->paginate(10);
 });
 
+Route::get('tweets', function(){
+    return Tweet::with('user:id,name,username,avatar')->latest()->paginate(10);
+});
 
 Route::post('/login', function (Request $request) {
     $request->validate([
@@ -63,3 +66,8 @@ Route::post('/login', function (Request $request) {
         'user' => $user->only('id','name','username','avatar')
     ], 201);
 });
+
+Route::post('/logout', function (Request $request) {
+    $request->user()->currentAccessToken()->delete();
+    return response()->json('Logged out',200);
+})->middleware('auth:sanctum');;

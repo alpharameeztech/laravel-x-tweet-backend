@@ -68,3 +68,31 @@ Route::get('ai', function () {
 
 
 });
+
+
+Route::get('/roast', function () {
+    return view('roast');
+});
+Route::post('/ai/roast', function () {
+    $attributes = request()->validate([
+        'topic' => [
+            'required', 'string', 'min:2', 'max:50'
+        ]
+    ]);
+
+    $mp3 = (new OpenAIChat())->send(
+        message: "Please roast {$attributes['topic']} in a funny and sarcastic tone.",
+        speech: true
+    );
+
+    $filename = md5($mp3) . '.mp3';
+    $file = 'roasts/' . $filename;
+    file_put_contents(public_path($file), $mp3);
+
+    return redirect('/roast')->with([
+        'file'  => '/' . $file,
+        'flash' => 'Boom. Roasted.'
+    ]);
+});
+
+

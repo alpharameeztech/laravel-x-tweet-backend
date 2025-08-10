@@ -95,4 +95,24 @@ Route::post('/ai/roast', function () {
     ]);
 });
 
+Route::get('/image', function () {
+    return view('image', [
+        'messages' => session('messages', [])
+    ]);
+});
+
+Route::post('/image', function () {
+    $attributes = request()->validate([
+        'description' => ['required', 'string', 'min:3']
+    ]);
+
+    $assistant = new \App\AI\Assistant(session('messages', []));
+
+    $assistant->visualize($attributes['description']);
+
+    session(['messages' => $assistant->messages()]);
+
+    return redirect('/image');
+});
+
 

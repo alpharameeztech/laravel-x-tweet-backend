@@ -16,11 +16,11 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('username')->unique();
-            $table->string('avatar');
-            $table->text('profile');
-            $table->string('location');
-            $table->string('link');
-            $table->string('link_text');
+            $table->string('avatar')->default('https://www.gravatar.com/avatar/?d=identicon');
+            $table->text('profile')->nullable();
+            $table->string('location')->nullable();
+            $table->string('link')->nullable();
+            $table->string('link_text')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

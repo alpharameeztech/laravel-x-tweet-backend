@@ -17,10 +17,23 @@ Route::post('/tweets', function (Request $request) {
     ]);
 
     return Tweet::create([
+        'user_id' => auth()->id(),
         'body' => $request->body,
-        'user_id' => User::first()->id
     ]);
+})->middleware('auth:sanctum');
+
+Route::get('/tweets_all', function () {
+    return Tweet::with('user:id,name,username,avatar')->latest()->paginate(10);
 });
+
+Route::get('/tweets', function () {
+    $followers = auth()->user()->follows->pluck('id');
+
+    logger('followers');
+    logger($followers);
+
+    return Tweet::with('user:id,name,username,avatar')->whereIn('user_id', $followers)->latest()->paginate(10);
+})->middleware('auth:sanctum');
 
 Route::get('/users/{user}', function(User $user){
     return $user->only(
@@ -38,10 +51,6 @@ Route::get('/users/{user}', function(User $user){
 
 Route::get('users/{user}/tweets', function(User $user){
     return $user->tweets()->with('user:id,name,username,avatar')->latest()->paginate(10);
-});
-
-Route::get('tweets', function(){
-    return Tweet::with('user:id,name,username,avatar')->latest()->paginate(10);
 });
 
 Route::post('/login', function (Request $request) {
@@ -82,10 +91,12 @@ Route::post('/register', function (Request $request) {
         'password' => \Illuminate\Support\Facades\Hash::make($request->password),
     ]);
 
+    $user->follows()->attach($user);
+
     return response()->json($user,201);
 });
 
 Route::post('/logout', function (Request $request) {
     $request->user()->currentAccessToken()->delete();
     return response()->json('Logged out',200);
-})->middleware('auth:sanctum');;
+})->middleware('auth:sanctum');

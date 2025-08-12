@@ -29,9 +29,6 @@ Route::get('/tweets_all', function () {
 Route::get('/tweets', function () {
     $followers = auth()->user()->follows->pluck('id');
 
-    logger('followers');
-    logger($followers);
-
     return Tweet::with('user:id,name,username,avatar')->whereIn('user_id', $followers)->latest()->paginate(10);
 })->middleware('auth:sanctum');
 
@@ -63,6 +60,13 @@ Route::post('/unfollow/{user}', function (User $user) {
     auth()->user()->unFollow($user);
 
     return response()->json('UnFollowed',201);
+})->middleware('auth:sanctum');
+
+Route::delete('/tweets/{tweet}', function (Tweet $tweet) {
+
+    abort_if($tweet->user->id !== auth()->id(),403);
+
+    return response()->json($tweet->delete(),201);
 })->middleware('auth:sanctum');
 
 Route::get('is_following/{user}', function (User $user) {

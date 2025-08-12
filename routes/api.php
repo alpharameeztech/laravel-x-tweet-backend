@@ -53,19 +53,23 @@ Route::get('users/{user}/tweets', function(User $user){
     return $user->tweets()->with('user:id,name,username,avatar')->latest()->paginate(10);
 });
 
-Route::post('/follow/{$user}', function (User $user) {
+Route::post('/follow/{user}', function (User $user) {
     auth()->user()->follow($user);
 
     return response()->json('Followed',201);
 })->middleware('auth:sanctum');
 
-Route::post('/unfollow/{$user}', function (User $user) {
+Route::post('/unfollow/{user}', function (User $user) {
     auth()->user()->unFollow($user);
 
     return response()->json('UnFollowed',201);
 })->middleware('auth:sanctum');
 
-Route::get('/is_following/{$user}', function (User $user) {
+Route::get('is_following/{user}', function (User $user) {
+
+    logger('is following');
+
+    logger($user);
 
     return response()->json( auth()->user()->isFollowing($user),200);
 

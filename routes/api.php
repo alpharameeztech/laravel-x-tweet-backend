@@ -67,10 +67,6 @@ Route::post('/unfollow/{user}', function (User $user) {
 
 Route::get('is_following/{user}', function (User $user) {
 
-    logger('is following');
-
-    logger($user);
-
     return response()->json( auth()->user()->isFollowing($user),200);
 
 })->middleware('auth:sanctum');

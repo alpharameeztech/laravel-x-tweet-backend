@@ -12,13 +12,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-
-
-Route::get('api/tweets/{tweet}', function(Tweet $tweet){
-    return $tweet->load('user:id,name,username,avatar');
-});
-
-
 // Route::get('ai',function(){
 //
 //     $response = Http::withHeaders([

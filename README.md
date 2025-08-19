@@ -1,61 +1,154 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# React Native X Tweet — Backend (Laravel API)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel 12 REST API that powers the React Native X Tweet app(https://github.com/alpharameeztech/react-native-x-tweet). It provides authentication, user profiles, tweeting, global and following feeds, follow/unfollow actions, and pagination. Authentication is handled with Laravel Sanctum personal access tokens.
 
-## About Laravel
+## Features
+- User registration, login, logout
+- Sanctum personal access tokens for user verification
+- Create, view, and delete tweets
+- Global tweets feed and “following” feed
+- Follow and unfollow users; check following status
+- Public user profiles and user-specific timelines
+- Pagination across list endpoints
+- MySQL database and database-backed queues
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Tech Stack
+- PHP 8.2, Laravel 12.x
+- MySQL
+- Laravel Sanctum
+- Queue: database
+- Composer + npm (tooling/scripts)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Prerequisites
+- PHP >= 8.2 and Composer
+- MySQL (or compatible)
+- Node.js + npm (optional for tooling)
+- OpenSSL extension enabled
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Installation
 
-## Learning Laravel
+1) Install dependencies:
+2) 2) Copy environment file:
+3) 3) Configure environment variables in .env:
+4) 4) Generate the app key:
+5) 5) Run migrations:
+6) 6) Seed sample data (users and tweets via factories):
+7) - This creates demo users and tweets to test feeds and pagination.
+- Recreate schema and seed from scratch:
+- 7) Start the queue worker (if needed):
+7) Base URL: http://127.0.0.1:8000
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+All API routes are available under /api — for example: http://127.0.0.1:8000/api/login
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Authentication with Sanctum
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+This API uses Laravel Sanctum personal access tokens to verify users. Obtain a token through the login endpoint, then include it as a Bearer token in subsequent requests.
 
-## Laravel Sponsors
+- Required headers for protected endpoints:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- Tokens are device-scoped: login requires a device_name, and logout revokes only the current token.
 
-### Premium Partners
+### Register
+- POST /api/register
+- Body:json { "name": "Your Name", "email": "user@example.com", "password": "your-strong-password", "password_confirmation": "your-strong-password" }
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+- Response: user details (and token depending on implementation).
 
-## Contributing
+### Login (Issue Sanctum Token)
+- POST /api/login
+- Body:- Response: user details (and token depending on implementation).
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Login (Issue Sanctum Token)
+- POST /api/login
+- Body:json { "email": "user@example.com", "password": "your-strong-password", "device_name": "my-device-name" }
+- Response:json { "token": "<SANCTUM_PERSONAL_ACCESS_TOKEN>", "user": { "id": 1, "name": "Your Name", "username": "your_username", "avatar": "https://..." } }
+### Logout (Revoke Token)
+- POST /api/logout (requires Authorization header)
+- Revokes the current access token.
 
-## Code of Conduct
+## API Reference
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Unless specified otherwise, endpoints require Authorization: Bearer <token>.
 
-## Security Vulnerabilities
+- GET /api/user
+    - Returns the authenticated user profile.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Tweets
+- GET /api/tweets
+    - Following feed (tweets from users you follow). Supports pagination.
+- GET /api/tweets_all
+    - Global feed (all users’ tweets). Supports pagination.
+- GET /api/tweets/{tweet}
+    - Retrieve a single tweet by ID.
+- POST /api/tweets
+    - Create a tweet.
+    - Body:
+  ```json
+  { "body": "Hello from the API!" }
+  ```
+- DELETE /api/tweets/{tweet}
+    - Delete a tweet you own.
 
-## License
+### Follows
+- POST /api/follow/{user}
+    - Follow a user by ID.
+- POST /api/unfollow/{user}
+    - Unfollow a user by ID.
+- GET /api/is_following/{user}
+    - Check if the authenticated user follows the specified user ID.
+    - Example response:
+  ```json
+  { "is_following": true }
+  ```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Profiles
+- GET /api/users/{user}
+    - Public user profile by ID.
+- GET /api/users/{user}/tweets
+    - Tweets authored by the specified user. Supports pagination.
+
+## Pagination
+
+Most listing endpoints support:
+- page (1-based)
+- per_page (optional; default is server-defined)
+
+Example:
+GET /api/tweets_all?page=1&per_page=20
+Typical paginated response (shape may vary):
+
+json { "data": , "current_page": 1, "per_page": 20, "total": 200, "last_page": 10 }
+## cURL Examples
+
+- Register:
+- bash curl -X POST [http://127.0.0.1:8000/api/register](http://127.0.0.1:8000/api/register)
+  -H "Content-Type: application/json"
+  -d '{"name":"Demo","email":"demo@example.com","password":"<PLACEHOLDER_PASSWORD>","password_confirmation":"<PLACEHOLDER_PASSWORD>"}'
+- Login (Sanctum token):
+  bash curl -X POST [http://127.0.0.1:8000/api/login](http://127.0.0.1:8000/api/login)
+  -H "Content-Type: application/json"
+  -d '{"email":"demo@example.com","password":"<PLACEHOLDER_PASSWORD>","device_name":"react-native-device"}'
+- Create tweet:
+  bash curl -X POST [http://127.0.0.1:8000/api/tweets](http://127.0.0.1:8000/api/tweets)
+  -H "Authorization: Bearer <PLACEHOLDER_TOKEN>"
+  -H "Content-Type: application/json"
+  -d '{"body":"Hello from cURL!"}'
+- Global feed (paginated):
+  bash curl "[http://127.0.0.1:8000/api/tweets_all?page=1&per_page=20](http://127.0.0.1:8000/api/tweets_all?page=1&per_page=20)"
+  -H "Authorization: Bearer <PLACEHOLDER_TOKEN>"
+  -H "Accept: application/json"
+- Follow a user:
+  bash curl -X POST [http://127.0.0.1:8000/api/follow/123](http://127.0.0.1:8000/api/follow/123)
+  -H "Authorization: Bearer <PLACEHOLDER_TOKEN>"
+  -H "Accept: application/json"
+## Development
+
+Useful commands:
+- `php artisan migrate`
+- `php artisan migrate:fresh --seed`
+- `php artisan db:seed`
+- `php artisan tinker`
+- `php artisan queue:work`
+- `php artisan serve`
+
+If available in composer.json:
